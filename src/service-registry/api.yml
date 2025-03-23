@@ -1,0 +1,82 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: Service Registry API
+  description: API for registering and discovering services in the service registry
+host: localhost:3001
+basePath: /
+schemes:
+  - http
+paths:
+  /register:
+    post:
+      summary: Register a service
+      description: Registers a service with the service registry
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: service
+          description: Service details
+          required: true
+          schema:
+            type: object
+            properties:
+              serviceName:
+                type: string
+              host:
+                type: string
+              port:
+                type: integer
+              metadata:
+                type: object
+      responses:
+        200:
+          description: Service registered successfully
+        400:
+          description: Missing required fields or invalid request
+  /discover/{serviceName}:
+    get:
+      summary: Discover a service
+      description: Discovers a service registered in the service registry
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: serviceName
+          description: Name of the service to discover
+          required: true
+          type: string
+      responses:
+        200:
+          description: Service found
+          schema:
+            type: object
+            properties:
+              serviceName:
+                type: string
+              host:
+                type: string
+              port:
+                type: integer
+              metadata:
+                type: object
+        404:
+          description: Service not found
+  /heartbeat/{serviceName}:
+    post:
+      summary: Send heartbeat
+      description: Sends a heartbeat to indicate the service is alive
+      parameters:
+        - in: path
+          name: serviceName
+          description: Name of the service sending the heartbeat
+          required: true
+          type: string
+      responses:
+        200:
+          description: Heartbeat received
+        404:
+          description: Service not registered
